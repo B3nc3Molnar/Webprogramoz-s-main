@@ -1,1 +1,1 @@
-A második fázisban kiegészítettem a regisztrációval a weboldalt.
+A második fázisban kiegészítettem regisztrációval a weboldalt.
