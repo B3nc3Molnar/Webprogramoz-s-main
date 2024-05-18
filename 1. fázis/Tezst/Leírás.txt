@@ -1,1 +1,0 @@
-Az első fázisban létrehoztam az alapját a weboldalnak, tehát a config.php-t, a header.php-t, a function.php-t és az index-php-t, valamit már létrehoztam a bejelentkezési panelt ami csatlakozik az adatbázishoz.
