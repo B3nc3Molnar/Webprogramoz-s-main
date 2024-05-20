@@ -2,11 +2,6 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-// Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
-if (!isset($_SESSION['username'])) {
-    header('Location: index.php?oldal=login');
-    exit();
-}
 
 // Képek lekérdezése az adatbázisból
 $sql = "SELECT * FROM uploaded_images ORDER BY uploaded_at DESC";

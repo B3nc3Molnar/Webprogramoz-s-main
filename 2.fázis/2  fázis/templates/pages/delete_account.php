@@ -2,8 +2,6 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-
-
 // Ellenőrizzük, hogy be van-e jelentkezve a felhasználó
 if (!isset($_SESSION['username'])) {
     header("Location: index.php?oldal=login");

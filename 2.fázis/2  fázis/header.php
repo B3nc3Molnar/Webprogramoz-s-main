@@ -2,16 +2,10 @@
 require_once('includes/config.php');
 require_once('functions.php');
 
-
 function generateMenuLink($key, $menuData) {
     // Általános linkképző függvény
     if ($menuData['menun'][0] == 1 && $menuData['menun'][1] == 1) {
-        if (!is_logged_in() && $key != 'login' && $key != 'register') {
-            $url = "index.php?oldal=login";
-        } else {
-            $url = isset($menuData['url']) ? $menuData['url'] : "index.php?oldal={$menuData['fajl']}";
-        }
-        return $url;
+        return isset($menuData['url']) ? $menuData['url'] : "index.php?oldal={$menuData['fajl']}";
     } else {
         return "#"; // Vagy más alapértelmezett URL, ha a menüpont nem érhető el
     }

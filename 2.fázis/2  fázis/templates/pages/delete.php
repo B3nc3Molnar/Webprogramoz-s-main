@@ -2,11 +2,7 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-// Ellenőrizzük, hogy be van-e jelentkezve a felhasználó
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php?oldal=login");
-    exit();
-}
+
 
 // Ellenőrizzük, hogy a kép törlési gombja lett-e megnyomva
 if (isset($_POST['delete_image'])) {

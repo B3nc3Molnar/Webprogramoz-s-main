@@ -2,10 +2,7 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php?oldal=login");
-    exit();
-}
+
 
 if (isset($_POST['szerkesztes_submit'])) {
     $film_id = $_POST['film_id'];

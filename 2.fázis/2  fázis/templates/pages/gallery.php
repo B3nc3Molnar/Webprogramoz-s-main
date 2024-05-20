@@ -2,43 +2,40 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-
-
-// Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
-if (!isset($_SESSION['username'])) {
-    header('Location: index.php?oldal=login');
-    exit();
-}
-
 // Ha a kép törlési űrlap elküldésre került
 if (isset($_POST['delete_image'])) {
-    $image_name = $_POST['image_name'];
+    // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+    if (isset($_SESSION['username'])) {
+        $image_name = $_POST['image_name'];
 
-    // Ellenőrizzük, hogy a képet feltöltő felhasználó törölni akarja-e a képet
-    $stmt = $conn->prepare("SELECT * FROM uploaded_images WHERE image_name = ? AND uploaded_by = ?");
-    $stmt->bind_param("ss", $image_name, $_SESSION['username']);
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // Ellenőrizzük, hogy a képet feltöltő felhasználó törölni akarja-e a képet
+        $stmt = $conn->prepare("SELECT * FROM uploaded_images WHERE image_name = ? AND uploaded_by = ?");
+        $stmt->bind_param("ss", $image_name, $_SESSION['username']);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Ha a felhasználó a képet törölheti
-    if ($result->num_rows > 0) {
-        // Töröljük a képet az adatbázisból
-        $delete_stmt = $conn->prepare("DELETE FROM uploaded_images WHERE image_name = ?");
-        $delete_stmt->bind_param("s", $image_name);
-        if ($delete_stmt->execute()) {
-            // A kép sikeresen törölve lett, töröljük a fájlt is a szerverről
-            $image_path = "pictures/" . $image_name;
-            if (file_exists($image_path)) {
-                unlink($image_path); // Képfájl törlése
+        // Ha a felhasználó a képet törölheti
+        if ($result->num_rows > 0) {
+            // Töröljük a képet az adatbázisból
+            $delete_stmt = $conn->prepare("DELETE FROM uploaded_images WHERE image_name = ?");
+            $delete_stmt->bind_param("s", $image_name);
+            if ($delete_stmt->execute()) {
+                // A kép sikeresen törölve lett, töröljük a fájlt is a szerverről
+                $image_path = "pictures/" . $image_name;
+                if (file_exists($image_path)) {
+                    unlink($image_path); // Képfájl törlése
+                }
+                // Frissítjük az oldalt
+                header('Location: ' . $_SERVER['PHP_SELF']);
+                exit();
+            } else {
+                echo "Hiba történt a kép törlése közben.";
             }
-            // Frissítjük az oldalt
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit();
         } else {
-            echo "Hiba történt a kép törlése közben.";
+            echo "Nem vagy jogosult törölni ezt a képet.";
         }
     } else {
-        echo "Nem vagy jogosult törölni ezt a képet.";
+        echo "Csak bejelentkezett felhasználók törölhetnek képeket.";
     }
 }
 
@@ -57,7 +54,6 @@ $result = $stmt->get_result();
 
 // Mappa, ahol a képek találhatók
 $image_folder = "pictures/";
-
 ?>
 
 <!DOCTYPE html>
@@ -191,7 +187,7 @@ $image_folder = "pictures/";
                     echo '<img src="' . $image_folder . $image_name . '" alt="Kép">';
                     echo '<form action="" method="post">';
                     echo '<input type="hidden" name="image_name" value="' . $image_name . '">';
-                    if ($uploaded_by === $_SESSION['username']) {
+                    if (isset($_SESSION['username']) && $uploaded_by === $_SESSION['username']) {
                         echo '<button type="submit" name="delete_image" class="delete-button">X</button>';
                     }
                     echo '</form>';
@@ -204,10 +200,10 @@ $image_folder = "pictures/";
         ?>
         </div>
 
-        <?php if (isset($_GET['permission_error'])): ?>
-            <div class="error-message">Nem vagy jogosult törölni ezt a képet.</div>
+        <?php if (!isset($_SESSION['username'])): ?>
+            <div class="error-message">Csak bejelentkezett felhasználók számára elérhető ez a tartalom. <a href="index.php?oldal=all_images">Összes kép megtekintése</a></div>
         <?php endif; ?>
-        
+
         <br>
         <a href="index.php" class="my-button">Vissza a főoldalra</a>
         <a href="index.php?oldal=upload" class="my-button">Kép feltöltése</a>

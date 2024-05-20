@@ -97,13 +97,7 @@
 <body>
 <?php
 session_start();
-require_once('includes/config.php');// Az adatbázis kapcsolatot tartalmazó fájl elérési útja
-
-// Ellenőrizzük, hogy be van-e jelentkezve a felhasználó
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php?oldal=login");
-    exit();
-}
+require_once('includes/config.php'); // Az adatbázis kapcsolatot tartalmazó fájl elérési útja
 
 // Ellenőrizzük, hogy a feltöltés gombra kattintottak-e és a kép meg lett-e adva
 if (isset($_POST['submit'])) {
@@ -146,7 +140,7 @@ if (isset($_POST['submit'])) {
             echo "<div class='message success'>A kép sikeresen feltöltve: " . $unique_image_name . "</div>";
 
             // Adatbázisba való mentés
-            $username = $_SESSION['username'];
+            $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Vendég';
             $uploaded_by = $username;
             $uploaded_at = date('Y-m-d H:i:s'); // A jelenlegi dátum és idő
 
@@ -180,7 +174,7 @@ if (isset($_POST['submit'])) {
         <input type="submit" value="Feltöltés" name="submit">
     </form>
     <br>
-    <a href="index.php?oldal=gallery" class="my-button">Kép Galéria</a>
+    <a href="index.php?oldal=all_images" class="my-button">Kép Galéria</a>
     <a href="index.php" class="my-button">Vissza a főoldalra</a>
 </div>
 </body>

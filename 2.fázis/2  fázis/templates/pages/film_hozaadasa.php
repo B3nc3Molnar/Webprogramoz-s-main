@@ -2,11 +2,6 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php?oldal=login");
-    exit();
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Limitáljuk a mezőket
     $rendezo_limit = 100;

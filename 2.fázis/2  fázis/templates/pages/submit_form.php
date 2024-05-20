@@ -2,12 +2,6 @@
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
 
-// Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
-if (!isset($_SESSION['username'])) {
-    echo 'Kérlek jelentkezz be, hogy beküldhesd az űrlapot!';
-    exit();
-}
-
 // Ellenőrizzük, hogy az űrlapot elküldték-e
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ellenőrizzük az űrlap adatokat
@@ -16,8 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Felhasználó neve
-    $username = $_SESSION['username'];
+    // Felhasználó neve, ha nincs bejelentkezve, akkor "Vendég"
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Vendég';
 
     // Űrlap adatainak beolvasása
     $message = $_POST['message'];
@@ -27,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("ss", $username, $message);
 
     if ($stmt->execute()) {
-        // Sikeres űrlapfeldolgozás esetén átirányítás a message.php oldalra
+        // Sikeres űrlapfeldolgozás esetén átirányítás a messages.php oldalra
         header("Location: index.php?oldal=messages");
         exit();
     } else {

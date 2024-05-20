@@ -1,11 +1,6 @@
 <?php
 session_start();
 require_once('/var/www/customers/vh-74184/web/home/web/includes/config.php');
-// Ellenőrizzük, hogy be van-e jelentkezve a felhasználó
-if (!isset($_SESSION['username'])) {
-    header("Location: index.php?oldal=login");
-    exit();
-}
 
 // Ellenőrizzük, hogy az értékelés gombra kattintottak-e
 if (isset($_POST['ertekeles_submit'])) {
@@ -13,8 +8,14 @@ if (isset($_POST['ertekeles_submit'])) {
         $film_id = $_POST['film_id'];
         $ertekeles = $_POST['ertekeles'];
 
+        // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+        if (isset($_SESSION['username'])) {
+            $username = $_SESSION['username'];
+        } else {
+            $username = 'Vendég'; // Ha a felhasználó nincs bejelentkezve, akkor 'Vendég'
+        }
+
         // Ellenőrizzük, hogy a felhasználó még nem értékelte-e már ezt a filmet
-        $username = $_SESSION['username'];
         $check_query = "SELECT * FROM film_ertekeles WHERE film_id = $film_id AND felhasznalo = '$username'";
         $result = $conn->query($check_query);
         if ($result->num_rows == 0) {
@@ -34,8 +35,14 @@ if (isset($_POST['ertekeles_torles'])) {
     if (isset($_POST['film_id'])) {
         $film_id = $_POST['film_id'];
 
+        // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
+        if (isset($_SESSION['username'])) {
+            $username = $_SESSION['username'];
+        } else {
+            $username = 'Vendég'; // Ha a felhasználó nincs bejelentkezve, akkor 'Vendég'
+        }
+
         // Ellenőrizzük, hogy a felhasználó értékelte-e már ezt a filmet
-        $username = $_SESSION['username'];
         $check_query = "SELECT * FROM film_ertekeles WHERE film_id = $film_id AND felhasznalo = '$username'";
         $result = $conn->query($check_query);
         if ($result->num_rows > 0) {
@@ -258,10 +265,6 @@ h1 {
                     // Átlagos értékelés
                     echo '<p class="film-atlag-ertekeles">Átlagos értékelés: ' . round($row['atlag_ertekeles'], 1) . '</p>';
 
-                    // Szerkesztés gomb
-                    echo '<div class="buttons">';
-                    echo '<a class="my-button" href="index.php?oldal=film_szerkesztese&id=' . $row['id'] . '">Szerkesztés</a>';
-                    echo '</div>';
                     
                     
                     echo '</div>'; // film-content
@@ -279,4 +282,3 @@ h1 {
     </div>
 </body>
 </html>
-
